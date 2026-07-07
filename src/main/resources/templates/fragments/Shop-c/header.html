@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>چرم آروند</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body class="font-text-font bg-leather-50 text-leather-900 antialiased">
+
+<header class="sticky top-0 z-50 border-b border-leather-200/70 bg-white/90 backdrop-blur-lg shadow-soft" th:fragment="header">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+
+        <!-- ========== موبایل: فقط بنر، سرچ، دکمه‌ها ========== -->
+        <div class="flex items-center gap-2 py-2 lg:hidden">
+
+            <!-- بنر سمت راست -->
+            <div class="flex-shrink-0">
+                <a href="/" class="flex items-center gap-1.5" aria-label="چرم آروند">
+                    <div class="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-br from-leather-100 to-leather-200 shadow-soft ring-1 ring-leather-200/60">
+                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V9.5z" stroke="#8B5E3C" stroke-width="2" stroke-linejoin="round"/>
+                            <path d="M9 21V12h6v9" stroke="#8B5E3C" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M12 7v4" stroke="#8B5E3C" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="flex flex-col leading-tight">
+                        <span class="text-sm font-extrabold tracking-tight text-leather-900">
+                            چرم <span class="text-leather-600">آروند</span>
+                        </span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- سرچ بار وسط -->
+            <div class="flex-1 min-w-0">
+                <div class="relative">
+                    <input type="search"
+                           placeholder="جستجو..."
+                           aria-label="جستجو"
+                           class="h-9 w-full rounded-2xl border border-leather-200 bg-leather-50/80 pl-3 pr-8 text-sm text-leather-900 outline-none transition placeholder:text-leather-400 focus:border-leather-400 focus:bg-white focus:ring-4 focus:ring-leather-100/60">
+                    <i class="fa-solid fa-magnifying-glass pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-leather-400 text-xs"></i>
+                </div>
+            </div>
+
+            <!-- دکمه‌های سمت چپ -->
+            <div class="flex items-center gap-1.5 flex-shrink-0">
+
+                <!-- ورود/خروج -->
+                <div sec:authorize="!isAuthenticated()">
+                    <a href="/login"
+                       class="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-leather-200 bg-white/80 text-leather-700 shadow-sm transition hover:border-leather-300 hover:bg-leather-50">
+                        <i class="fa-solid fa-right-to-bracket text-sm"></i>
+                    </a>
+                </div>
+
+                <div sec:authorize="isAuthenticated()">
+                    <a href="/profile"
+                       class="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-leather-200 bg-white/80 text-leather-700 shadow-sm transition hover:border-leather-300 hover:bg-leather-50">
+                        <span class="flex h-6 w-6 items-center justify-center rounded-full bg-leather-600 text-[10px] font-bold text-white"
+                              th:text="${currentUser.avatar != null ? currentUser.avatar : currentUser.firstName.substring(0,1)}"></span>
+                    </a>
+                </div>
+
+                <!-- سبد خرید -->
+                <div class="relative">
+                    <div sec:authorize="!isAuthenticated()">
+                        <a href="/login"
+                           class="relative inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-leather-200 bg-white/80 text-leather-700 shadow-sm transition hover:border-leather-300 hover:bg-leather-50">
+                            <i class="fa-solid fa-cart-shopping text-sm"></i>
+                        </a>
+                    </div>
+
+                    <div sec:authorize="isAuthenticated()" class="relative">
+                        <button class="relative inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-leather-200 bg-white/80 text-leather-700 shadow-sm transition hover:border-leather-300 hover:bg-leather-50"
+                                type="button"
+                                onclick="this.nextElementSibling.classList.toggle('hidden')">
+                            <i class="fa-solid fa-cart-shopping text-sm"></i>
+                            <span class="absolute -right-1 -top-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-leather-600 px-1 text-[8px] font-bold text-white shadow-sm"
+                                  th:text="${cartCount}" th:if="${cartCount > 0}"></span>
+                        </button>
+
+                        <!-- دراپ‌داون سبد خرید موبایل -->
+                        <div class="absolute left-0 mt-2 hidden w-[300px] max-w-[88vw] overflow-hidden rounded-2xl border border-leather-200/80 bg-white/95 backdrop-blur-sm shadow-card">
+                            <div class="flex items-center justify-between border-b border-leather-100/80 bg-gradient-to-l from-leather-50/60 to-white/80 px-4 py-3">
+                                <span class="flex items-center gap-2 text-sm font-bold text-leather-900">
+                                    <i class="fa-solid fa-cart-shopping text-leather-500 text-xs"></i>
+                                    سبد خرید
+                                </span>
+                                <span class="text-xs text-leather-500" th:text="${cartCount} + ' محصول'"></span>
+                            </div>
+
+                            <div class="max-h-72 overflow-y-auto p-3">
+                                <div class="flex flex-col items-center justify-center gap-2 rounded-2xl bg-leather-50/60 px-4 py-6 text-center text-leather-500"
+                                     th:if="${cartCount == 0}">
+                                    <i class="fa-solid fa-cart-shopping text-2xl text-leather-300"></i>
+                                    <span class="text-sm font-medium">سبد خرید شما خالی است</span>
+                                </div>
+
+                                <div class="space-y-3" th:if="${cartCount > 0}">
+                                    <div class="flex items-center gap-3 rounded-2xl border border-leather-100/80 p-2.5 transition hover:bg-leather-50/60"
+                                         th:each="item : ${cartItems}">
+                                        <div class="h-11 w-11 shrink-0 overflow-hidden rounded-xl bg-leather-100">
+                                            <img th:src="@{/images/products/leather-bag.jpg}" alt="کیف" width="44" height="44"
+                                                 class="h-full w-full object-cover">
+                                        </div>
+                                        <div class="min-w-0 flex-1">
+                                            <p class="truncate text-sm font-semibold text-leather-900" th:text="${item.name}">کیف چرم</p>
+                                            <span class="text-xs font-bold text-leather-700"
+                                                  th:text="${#numbers.formatDecimal(item.price, 0, 0, 'COMMA')} + ' تومان'"></span>
+                                        </div>
+                                        <button type="button"
+                                                class="flex h-7 w-7 items-center justify-center rounded-full text-leather-400 transition hover:bg-red-50 hover:text-red-500">
+                                            <i class="fa-solid fa-xmark text-xs"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="border-t border-leather-100/80 p-3" th:if="${cartCount > 0}">
+                                <div class="mb-2.5 flex items-center justify-between text-sm">
+                                    <span class="text-leather-500">جمع کل:</span>
+                                    <strong class="text-base text-leather-900"
+                                            th:text="${#numbers.formatDecimal(cartTotal, 0, 0, 'COMMA')} + ' تومان'"></strong>
+                                </div>
+                                <a href="/cart"
+                                   class="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-leather-600 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-leather-700 hover:shadow-soft">
+                                    <i class="fa-solid fa-bag-shopping text-xs"></i>
+                                    مشاهده سبد خرید
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ========== دسکتاپ: همه چیز کامل ========== -->
+        <div class="hidden lg:block">
+
+            <!-- هدر دسکتاپ -->
+            <div class="flex flex-col gap-2 py-3 lg:flex-row lg:items-center lg:justify-between lg:py-4">
+
+                <!-- لوگو -->
+                <div class="flex items-center justify-between lg:justify-start">
+                    <a href="/" class="flex items-center gap-2 shrink-0 group lg:gap-3" aria-label="چرم آروند">
+                        <div class="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-br from-leather-100 to-leather-200 shadow-soft ring-1 ring-leather-200/60 transition duration-300 group-hover:scale-105 lg:h-11 lg:w-11">
+                            <svg class="h-6 w-6 lg:h-7 lg:w-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V9.5z" stroke="#8B5E3C" stroke-width="2" stroke-linejoin="round"/>
+                                <path d="M9 21V12h6v9" stroke="#8B5E3C" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M12 7v4" stroke="#8B5E3C" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <div class="flex flex-col leading-tight">
+                            <span class="text-lg font-extrabold tracking-tight text-leather-900 lg:text-xl">
+                                چرم <span class="text-leather-600">آروند</span>
+                            </span>
+                            <span class="hidden text-[11px] font-medium text-leather-500 lg:block">کیف، پوشاک و اکسسوری چرمی</span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- سرچ دسکتاپ -->
+                <div class="w-full lg:max-w-xl xl:max-w-2xl">
+                    <div class="relative">
+                        <input type="search"
+                               placeholder="جستجوی محصولات چرم ..."
+                               aria-label="جستجو"
+                               class="h-9 w-full rounded-2xl border border-leather-200 bg-leather-50/80 pl-4 pr-9 text-sm text-leather-900 outline-none transition placeholder:text-leather-400 focus:border-leather-400 focus:bg-white focus:ring-4 focus:ring-leather-100/60 lg:h-11 lg:pr-11">
+                        <i class="fa-solid fa-magnifying-glass pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-leather-400 text-xs lg:right-4 lg:text-sm"></i>
+                    </div>
+                </div>
+
+                <!-- دکمه‌های دسکتاپ -->
+                <div class="hidden lg:flex items-center gap-2">
+
+                    <div sec:authorize="!isAuthenticated()">
+                        <a href="/login"
+                           class="inline-flex h-11 items-center gap-2 rounded-2xl border border-leather-200 bg-white/80 px-4 text-sm font-medium text-leather-800 shadow-sm transition hover:-translate-y-0.5 hover:border-leather-300 hover:bg-leather-50 hover:shadow-soft">
+                            <i class="fa-solid fa-right-to-bracket text-leather-500 text-xs"></i>
+                            <span>ورود | ثبت‌نام</span>
+                        </a>
+                    </div>
+
+                    <div class="relative" sec:authorize="isAuthenticated()">
+                        <div class="group/user relative">
+                            <button class="inline-flex h-11 items-center gap-2 rounded-2xl border border-leather-200 bg-white/80 px-3 shadow-sm transition hover:border-leather-300 hover:bg-leather-50"
+                                    type="button"
+                                    onclick="this.nextElementSibling.classList.toggle('hidden')">
+                                <span class="flex h-8 w-8 items-center justify-center rounded-full bg-leather-600 text-xs font-bold text-white shadow-sm"
+                                      th:text="${currentUser.avatar != null ? currentUser.avatar : currentUser.firstName.substring(0,1)}"></span>
+                                <span class="hidden max-w-[70px] truncate text-sm font-semibold text-leather-800 sm:block"
+                                      th:text="${currentUser.firstName}"></span>
+                                <i class="fa-solid fa-chevron-down text-[10px] text-leather-400"></i>
+                            </button>
+
+                            <div class="absolute left-0 mt-3 hidden w-72 overflow-hidden rounded-2xl border border-leather-200/80 bg-white/95 backdrop-blur-sm shadow-card">
+                                <div class="border-b border-leather-100/80 bg-gradient-to-l from-leather-50/60 to-white/80 p-4">
+                                    <div class="flex items-start justify-between gap-3">
+                                        <div class="min-w-0">
+                                            <p class="truncate text-sm font-extrabold text-leather-900" th:text="${currentUser.fullName}"></p>
+                                            <p class="truncate text-xs text-leather-500" th:text="${currentUser.email}"></p>
+                                        </div>
+                                        <span class="inline-flex shrink-0 items-center gap-1 rounded-full bg-leather-100/80 px-3 py-1 text-xs font-semibold text-leather-700 backdrop-blur-sm">
+                                            <i class="fa-solid fa-award text-[10px]"></i>
+                                            <span th:text="${currentUser.points}"></span>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <nav class="p-2">
+                                    <a href="/profile" class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-leather-700 transition hover:bg-leather-50 hover:text-leather-900">
+                                        <i class="fa-regular fa-user w-5 text-center text-leather-400 text-sm"></i>
+                                        <span>پروفایل من</span>
+                                    </a>
+                                    <a href="/orders" class="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm text-leather-700 transition hover:bg-leather-50 hover:text-leather-900">
+                                        <span class="flex items-center gap-3">
+                                            <i class="fa-solid fa-box-open w-5 text-center text-leather-400 text-sm"></i>
+                                            <span>سفارشات</span>
+                                        </span>
+                                        <span class="rounded-full bg-leather-100/80 px-2 py-0.5 text-[10px] font-bold text-leather-700">3</span>
+                                    </a>
+                                    <a href="/wishlist" class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-leather-700 transition hover:bg-leather-50 hover:text-leather-900">
+                                        <i class="fa-regular fa-heart w-5 text-center text-leather-400 text-sm"></i>
+                                        <span>علاقه‌مندی‌ها</span>
+                                    </a>
+                                    <a href="/points" class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-leather-700 transition hover:bg-leather-50 hover:text-leather-900">
+                                        <i class="fa-solid fa-star w-5 text-center text-leather-400 text-sm"></i>
+                                        <span>امتیازات من</span>
+                                    </a>
+                                    <div class="my-2 border-t border-leather-100/80"></div>
+                                    <form th:action="@{/logout}" method="post">
+                                        <button type="submit"
+                                                class="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-red-600 transition hover:bg-red-50">
+                                            <i class="fa-solid fa-right-from-bracket w-5 text-center text-sm"></i>
+                                            <span>خروج</span>
+                                        </button>
+                                    </form>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+
+                    <span class="hidden h-7 w-px bg-leather-200/60 lg:block"></span>
+
+                    <div class="relative">
+                        <div sec:authorize="!isAuthenticated()">
+                            <a href="/login"
+                               class="relative inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-leather-200 bg-white/80 text-leather-700 shadow-sm transition hover:-translate-y-0.5 hover:border-leather-300 hover:bg-leather-50">
+                                <i class="fa-solid fa-cart-shopping text-sm"></i>
+                            </a>
+                        </div>
+
+                        <div sec:authorize="isAuthenticated()" class="relative">
+                            <button class="relative inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-leather-200 bg-white/80 text-leather-700 shadow-sm transition hover:-translate-y-0.5 hover:border-leather-300 hover:bg-leather-50"
+                                    type="button"
+                                    onclick="this.nextElementSibling.classList.toggle('hidden')">
+                                <i class="fa-solid fa-cart-shopping text-sm"></i>
+                                <span class="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-leather-600 px-1.5 text-[10px] font-bold text-white shadow-sm"
+                                      th:text="${cartCount}" th:if="${cartCount > 0}"></span>
+                            </button>
+
+                            <div class="absolute left-0 mt-3 hidden w-[340px] max-w-[92vw] overflow-hidden rounded-2xl border border-leather-200/80 bg-white/95 backdrop-blur-sm shadow-card">
+                                <div class="flex items-center justify-between border-b border-leather-100/80 bg-gradient-to-l from-leather-50/60 to-white/80 px-4 py-3">
+                                    <span class="flex items-center gap-2 text-sm font-bold text-leather-900">
+                                        <i class="fa-solid fa-cart-shopping text-leather-500 text-xs"></i>
+                                        سبد خرید
+                                    </span>
+                                    <span class="text-xs text-leather-500" th:text="${cartCount} + ' محصول'"></span>
+                                </div>
+
+                                <div class="max-h-80 overflow-y-auto p-3">
+                                    <div class="flex flex-col items-center justify-center gap-2 rounded-2xl bg-leather-50/60 px-4 py-8 text-center text-leather-500"
+                                         th:if="${cartCount == 0}">
+                                        <i class="fa-solid fa-cart-shopping text-2xl text-leather-300"></i>
+                                        <span class="text-sm font-medium">سبد خرید شما خالی است</span>
+                                    </div>
+
+                                    <div class="space-y-3" th:if="${cartCount > 0}">
+                                        <div class="flex items-center gap-3 rounded-2xl border border-leather-100/80 p-3 transition hover:bg-leather-50/60"
+                                             th:each="item : ${cartItems}">
+                                            <div class="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-leather-100">
+                                                <img th:src="@{/images/products/leather-bag.jpg}" alt="کیف" width="56" height="56"
+                                                     class="h-full w-full object-cover">
+                                            </div>
+                                            <div class="min-w-0 flex-1">
+                                                <p class="truncate text-sm font-semibold text-leather-900" th:text="${item.name}">کیف چرم</p>
+                                                <span class="text-sm font-bold text-leather-700"
+                                                      th:text="${#numbers.formatDecimal(item.price, 0, 0, 'COMMA')} + ' تومان'"></span>
+                                            </div>
+                                            <button type="button"
+                                                    class="flex h-8 w-8 items-center justify-center rounded-full text-leather-400 transition hover:bg-red-50 hover:text-red-500">
+                                                <i class="fa-solid fa-xmark text-sm"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="border-t border-leather-100/80 p-4" th:if="${cartCount > 0}">
+                                    <div class="mb-3 flex items-center justify-between text-sm">
+                                        <span class="text-leather-500">جمع کل:</span>
+                                        <strong class="text-base text-leather-900"
+                                                th:text="${#numbers.formatDecimal(cartTotal, 0, 0, 'COMMA')} + ' تومان'"></strong>
+                                    </div>
+                                    <a href="/cart"
+                                       class="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-leather-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-leather-700 hover:shadow-soft">
+                                        <i class="fa-solid fa-bag-shopping text-xs"></i>
+                                        مشاهده سبد خرید
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- منوی دسکتاپ -->
+            <nav class="hidden lg:block pb-4">
+                <div class="flex items-center justify-between gap-3 rounded-2xl border border-leather-200/60 bg-white/80 px-3 py-2 shadow-soft backdrop-blur-sm">
+
+                    <div class="relative">
+                        <button class="inline-flex items-center justify-center gap-3 rounded-2xl bg-leather-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-leather-700"
+                                type="button"
+                                onclick="this.nextElementSibling.classList.toggle('hidden')">
+                            <i class="fa-solid fa-bars text-leather-400 text-xs"></i>
+                            <span class="text-black">دسته‌بندی</span>
+                            <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                        </button>
+
+                        <div class="absolute right-0 z-40 mt-3 hidden w-[640px] max-w-[95vw] overflow-hidden rounded-2xl border border-leather-200/80 bg-white/95 backdrop-blur-sm shadow-card">
+                            <div class="grid gap-5 p-6 md:grid-cols-3">
+                                <div>
+                                    <h4 class="mb-3 flex items-center gap-2 text-sm font-extrabold text-leather-900">
+                                        <i class="fa-solid fa-briefcase text-leather-500 text-xs"></i>
+                                        کیف
+                                    </h4>
+                                    <ul class="space-y-1.5">
+                                        <li><a href="#" class="text-sm text-leather-600 transition hover:text-leather-900 hover:underline-offset-2">کیف دستی زنانه</a></li>
+                                        <li><a href="#" class="text-sm text-leather-600 transition hover:text-leather-900 hover:underline-offset-2">کیف دوشی</a></li>
+                                        <li><a href="#" class="text-sm text-leather-600 transition hover:text-leather-900 hover:underline-offset-2">کیف کمری</a></li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h4 class="mb-3 flex items-center gap-2 text-sm font-extrabold text-leather-900">
+                                        <i class="fa-solid fa-shirt text-leather-500 text-xs"></i>
+                                        پوشاک چرم
+                                    </h4>
+                                    <ul class="space-y-1.5">
+                                        <li><a href="#" class="text-sm text-leather-600 transition hover:text-leather-900 hover:underline-offset-2">کت چرم مردانه</a></li>
+                                        <li><a href="#" class="text-sm text-leather-600 transition hover:text-leather-900 hover:underline-offset-2">کت چرم زنانه</a></li>
+                                        <li><a href="#" class="text-sm text-leather-600 transition hover:text-leather-900 hover:underline-offset-2">جلیقه چرم</a></li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h4 class="mb-3 flex items-center gap-2 text-sm font-extrabold text-leather-900">
+                                        <i class="fa-solid fa-gem text-leather-500 text-xs"></i>
+                                        اکسسوری
+                                    </h4>
+                                    <ul class="space-y-1.5">
+                                        <li><a href="#" class="text-sm text-leather-600 transition hover:text-leather-900 hover:underline-offset-2">کمربند چرم</a></li>
+                                        <li><a href="#" class="text-sm text-leather-600 transition hover:text-leather-900 hover:underline-offset-2">کیف پول</a></li>
+                                        <li><a href="#" class="text-sm text-leather-600 transition hover:text-leather-900 hover:underline-offset-2">دستکش چرم</a></li>
+                                        <li><a href="#" class="text-sm text-leather-600 transition hover:text-leather-900 hover:underline-offset-2">جاکارتی</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-1">
+                        <a href="/new-arrivals" class="inline-flex items-center gap-2 rounded-xl px-3 py-1.5 text-sm font-medium text-leather-700 transition hover:bg-leather-50 hover:text-leather-900 lg:px-4">
+                            <i class="fa-solid fa-sparkles text-leather-400 text-xs"></i>
+                            جدیدترین‌ها
+                        </a>
+                        <a href="/best-sellers" class="inline-flex items-center gap-2 rounded-xl px-3 py-1.5 text-sm font-medium text-leather-700 transition hover:bg-leather-50 hover:text-leather-900 lg:px-4">
+                            <i class="fa-solid fa-fire text-leather-400 text-xs"></i>
+                            پرفروش‌ها
+                        </a>
+                        <a href="/sale" class="inline-flex items-center gap-2 rounded-xl px-3 py-1.5 text-sm font-medium text-red-600 transition hover:bg-red-50 lg:px-4">
+                            <i class="fa-solid fa-tags text-xs"></i>
+                            تخفیف‌ها
+                        </a>
+                        <a href="/events" class="inline-flex items-center gap-2 rounded-xl px-3 py-1.5 text-sm font-medium text-leather-700 transition hover:bg-leather-50 hover:text-leather-900 lg:px-4">
+                            <i class="fa-solid fa-calendar-days text-leather-400 text-xs"></i>
+                            رویدادها
+                        </a>
+                        <a href="/gift" class="inline-flex items-center gap-2 rounded-xl px-3 py-1.5 text-sm font-medium text-leather-700 transition hover:bg-leather-50 hover:text-leather-900 lg:px-4">
+                            <i class="fa-solid fa-gift text-leather-400 text-xs"></i>
+                            هدایا
+                        </a>
+                    </div>
+
+                </div>
+            </nav>
+
+        </div>
+        <!-- ========== پایان دسکتاپ ========== -->
+
+    </div>
+</header>
+
+</body>
+</html>

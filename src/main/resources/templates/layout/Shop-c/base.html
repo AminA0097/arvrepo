@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>چرم آروند | فروشگاه اینترنتی چرم طبیعی</title>
+    <meta name="description" content="آروند عرضه‌کننده محصولات چرم ۱۰۰٪ طبیعی با کیفیت بالا">
+    <meta name="theme-color" content="#8B5E3C">
+    <link rel="stylesheet" href="output.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+        <link rel="stylesheet" th:href="@{/css/main.css}">
+
+    <th:block layout:fragment="page-styles"></th:block>
+</head>
+<body>
+
+<div class="ar-page-wrapper">
+
+    <header th:replace="~{fragments/Shop-c/header :: header}"></header>
+
+    <main class="ar-main ar-main-content">
+        <div layout:fragment="content">
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/Shop-c/footer :: footer}"></footer>
+
+</div>
+
+<th:block layout:fragment="page-scripts"></th:block>
+<script th:src="@{/js/swiper-bundle.min.js}"></script>
+</body>
+</html>
