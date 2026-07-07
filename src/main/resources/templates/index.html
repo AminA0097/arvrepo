@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/Shop-c/base}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صفحه اصلی | چرم آروند</title>
+    <meta name="description" content="خرید محصولات چرم ۱۰۰٪ طبیعی با کیفیت بالا از چرم آروند">
+
+    <link rel="stylesheet" th:href="@{/css/swiper-bundle.min.css}">
+    <link rel="stylesheet" th:href="@{/vendor/fontawesome/css/all.min.css}">
+
+</head>
+<body>
+<div layout:fragment="content">
+    <div id="toastContainer" class="toast-container"></div>
+    <div class="ar-container" style="padding: 0;">
+        <th:block th:replace="~{fragments/Shop-c/stories :: stories}"></th:block>
+    </div>
+    <div class="ar-container" style="padding: 0;">
+        <th:block th:replace="~{fragments/Shop-c/amazing :: amazing}"></th:block>
+    </div>
+    <div class="ar-container" style="padding: 0;">
+        <th:block th:replace="~{fragments/Shop-c/best-seller :: bestSeller}"></th:block>
+    </div>
+    <div class="ar-container" style="padding: 0;">
+        <th:block th:replace="~{fragments/Shop-c/best-view :: mostViews}"></th:block>
+    </div>
+
+
+    <div class="ar-container">
+        <th:block th:replace="~{fragments/Shop-c/categories :: categories(${categoryPage})}"></th:block>
+    </div>
+    <script th:src="@{/js/product-sections.js}"></script>
+    <script th:src="@{/js/swiper-init.js}"></script>
+    <script th:src="@{/js/base.js}"></script>
+    <script th:src="@{/js/best-seller.js}"></script>
+    <script th:src="@{/js/best-view.js}"></script>
+    <script th:src="@{/js/amazing.js}"></script>
+</div>
+</body>
+</html>
