@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<th:block th:fragment="amazing">
+    <style>
+        /* Amazing Section Styles */
+        .ar-amazing-section {
+            padding: 1.5rem 0;
+            position: relative;
+            background: rgba(250, 249, 248, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(232, 227, 222, 0.5);
+            border-bottom: 1px solid rgba(232, 227, 222, 0.5);
+        }
+
+        .ar-amazing-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .ar-amazing-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #2F1E12;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .ar-amazing-title-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            background: linear-gradient(135deg, #A8794E, #8B5E3C);
+            border-radius: 0.75rem;
+            color: white;
+            font-size: 0.875rem;
+        }
+
+        .ar-amazing-timer {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            background: linear-gradient(135deg, #2F1E12, #53351F);
+            padding: 0.5rem 1rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 12px rgba(47, 30, 18, 0.2);
+            direction: ltr;
+        }
+
+        .ar-amazing-timer-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 2rem;
+        }
+
+        .ar-amazing-timer-val {
+            font-family: 'Tanha-FD', serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: white;
+            line-height: 1.2;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0 0.25rem;
+            border-radius: 0.25rem;
+            min-width: 1.75rem;
+            text-align: center;
+        }
+
+        .ar-amazing-timer-label {
+            font-family: 'Shabnam', system-ui, sans-serif;
+            font-size: 0.5rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .ar-amazing-timer-separator {
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 700;
+            font-size: 1.25rem;
+            padding: 0 0.125rem;
+        }
+
+        .ar-amazing-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Shabnam', system-ui, sans-serif;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #6F472B;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .ar-amazing-more:hover {
+            color: #A8794E;
+            gap: 0.75rem;
+        }
+
+        .ar-amazing-more i {
+            font-size: 0.75rem;
+        }
+
+        /* Swiper Container */
+        .ar-amazing-swiper {
+            overflow: hidden;
+            padding: 0.5rem 0.25rem;
+        }
+
+        .ar-amazing-swiper .swiper-wrapper {
+            padding: 0.25rem 0;
+        }
+
+        .ar-amazing-swiper .swiper-slide {
+            width: 200px;
+            height: auto;
+        }
+
+        /* Product Card */
+        .ar-amazing-product-card {
+            display: block;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(47, 30, 18, 0.06);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(232, 227, 222, 0.6);
+            height: 100%;
+        }
+
+        .ar-amazing-product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(47, 30, 18, 0.12);
+            border-color: #D6C2AE;
+            background: rgba(255, 255, 255, 0.98);
+        }
+
+        .ar-product-image-wrapper {
+            position: relative;
+            padding-top: 100%;
+            background: #F8F5F1;
+            overflow: hidden;
+        }
+
+        .ar-product-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem;
+        }
+
+        .ar-product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+
+        .ar-amazing-product-card:hover .ar-product-image img {
+            transform: scale(1.05);
+        }
+
+        .ar-product-discount-badge {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: linear-gradient(135deg, #DC2626, #B91C1C);
+            color: white;
+            font-family: 'Tanha-FD', serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.25rem 0.625rem;
+            border-radius: 9999px;
+            box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+            z-index: 2;
+        }
+
+        .ar-amazing-product-title {
+            font-family: 'Shabnam', system-ui, sans-serif;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #2F1E12;
+            padding: 0.75rem 0.875rem 0.25rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 2.75rem;
+            line-height: 1.4;
+        }
+
+        .ar-product-prices {
+            padding: 0.25rem 0.875rem 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .ar-product-price-old {
+            font-family: 'Tanha-FD', serif;
+            font-size: 0.75rem;
+            color: #9A9390;
+            text-decoration: line-through;
+        }
+
+        .ar-amazing-product-price {
+            font-family: 'Tanha-FD', serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #A8794E;
+        }
+
+        .ar-amazing-product-price-currency {
+            font-family: 'Shabnam', system-ui, sans-serif;
+            font-size: 0.625rem;
+            font-weight: 400;
+            color: #9A9390;
+        }
+
+        .ar-product-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0.875rem 0.75rem;
+            border-top: 1px solid rgba(241, 233, 225, 0.6);
+            gap: 0.5rem;
+        }
+
+        .ar-product-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-family: 'Shabnam', system-ui, sans-serif;
+            font-size: 0.7rem;
+            color: #9A9390;
+        }
+
+        .ar-product-meta-item .icon {
+            font-size: 0.6rem;
+        }
+
+        .ar-product-meta-item .value {
+            font-weight: 500;
+            font-family: 'Tanha-FD', serif;
+        }
+
+        .ar-product-stock {
+            color: #22C55E;
+        }
+
+        .ar-product-stock.low {
+            color: #F59E0B;
+        }
+
+        .ar-product-stock.out {
+            color: #EF4444;
+        }
+
+        .ar-product-rank .star {
+            color: #F59E0B;
+        }
+
+        /* Skeleton */
+        .ar-skeleton-wrapper {
+            display: flex;
+            gap: 1rem;
+            overflow: hidden;
+        }
+
+        .ar-skeleton-card {
+            min-width: 200px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 1rem;
+            overflow: hidden;
+            border: 1px solid rgba(241, 233, 225, 0.6);
+            padding: 1rem;
+        }
+
+        .ar-skeleton-image {
+            width: 100%;
+            padding-top: 100%;
+            background: linear-gradient(90deg, #F1E9E1 25%, #E8E3DE 50%, #F1E9E1 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .ar-skeleton-title {
+            height: 0.75rem;
+            background: linear-gradient(90deg, #F1E9E1 25%, #E8E3DE 50%, #F1E9E1 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 0.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .ar-skeleton-price {
+            height: 1rem;
+            width: 60%;
+            background: linear-gradient(90deg, #F1E9E1 25%, #E8E3DE 50%, #F1E9E1 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 0.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .ar-skeleton-meta {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .ar-skeleton-meta-item {
+            height: 0.5rem;
+            flex: 1;
+            background: linear-gradient(90deg, #F1E9E1 25%, #E8E3DE 50%, #F1E9E1 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 0.25rem;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        /* Pagination */
+        .ar-amazing-pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.375rem;
+            margin-top: 1rem;
+        }
+
+        .ar-amazing-pagination .swiper-pagination-bullet {
+            width: 0.5rem;
+            height: 0.5rem;
+            background: #D6C2AE;
+            opacity: 1;
+            border-radius: 9999px;
+            transition: all 0.3s ease;
+        }
+
+        .ar-amazing-pagination .swiper-pagination-bullet-active {
+            width: 1.5rem;
+            background: #A8794E;
+        }
+
+        /* Empty State */
+        .ar-amazing-empty {
+            font-family: 'Shabnam', system-ui, sans-serif;
+            text-align: center;
+            padding: 2rem 1rem;
+            color: #9A9390;
+        }
+
+        .ar-amazing-empty-icon {
+            font-size: 2.5rem;
+            color: #D6C2AE;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (min-width: 640px) {
+            .ar-amazing-section {
+                padding: 2rem 0;
+            }
+
+            .ar-amazing-title {
+                font-size: 1.5rem;
+            }
+
+            .ar-amazing-timer-val {
+                font-size: 1.5rem;
+                min-width: 2rem;
+            }
+
+            .ar-amazing-swiper .swiper-slide {
+                width: 220px;
+            }
+
+            .ar-amazing-timer {
+                padding: 0.5rem 1.25rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .ar-amazing-swiper .swiper-slide {
+                width: 240px;
+            }
+
+            .ar-amazing-timer-val {
+                font-size: 1.75rem;
+                min-width: 2.25rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .ar-amazing-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.75rem;
+            }
+
+            .ar-amazing-timer {
+                justify-content: center;
+                padding: 0.5rem;
+            }
+
+            .ar-amazing-timer-val {
+                font-size: 1rem;
+                min-width: 1.5rem;
+            }
+
+            .ar-amazing-timer-label {
+                font-size: 0.4rem;
+            }
+
+            .ar-amazing-swiper .swiper-slide {
+                width: 160px;
+            }
+
+            .ar-amazing-more {
+                justify-content: center;
+            }
+        }
+    </style>
+
+    <section class="ar-amazing-section">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
+             >
+
+            <!-- Header -->
+            <div class="ar-amazing-header">
+                <h2 class="ar-amazing-title">
+                    <span class="ar-amazing-title-icon">
+                        <i class="fa-solid fa-bolt"></i>
+                    </span>
+                    پیشنهاد شگفت‌انگیز
+                </h2>
+
+                <!-- Timer -->
+                <div class="ar-amazing-timer" id="amazing-timer" dir="ltr">
+                    <div class="ar-amazing-timer-unit">
+                        <span class="ar-amazing-timer-val">--</span>
+                        <span class="ar-amazing-timer-label">ساعت</span>
+                    </div>
+                    <span class="ar-amazing-timer-separator">:</span>
+                    <div class="ar-amazing-timer-unit">
+                        <span class="ar-amazing-timer-val">--</span>
+                        <span class="ar-amazing-timer-label">دقیقه</span>
+                    </div>
+                    <span class="ar-amazing-timer-separator">:</span>
+                    <div class="ar-amazing-timer-unit">
+                        <span class="ar-amazing-timer-val">--</span>
+                        <span class="ar-amazing-timer-label">ثانیه</span>
+                    </div>
+                </div>
+
+                <a href="/amazing" class="ar-amazing-more">
+                    مشاهده همه
+                    <i class="fa-solid fa-chevron-left"></i>
+                </a>
+            </div>
+
+            <!-- Swiper -->
+            <div class="swiper ar-amazing-swiper" id="amazing-swiper">
+                <div class="swiper-wrapper">
+                    <!-- Skeleton will show here -->
+                </div>
+                <div class="ar-amazing-pagination"></div>
+            </div>
+
+        </div>
+    </section>
+</th:block>
+
+</body>
+</html>

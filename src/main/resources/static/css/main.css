@@ -1,0 +1,68 @@
+@font-face {
+    font-family: 'Shabnam';
+    src: url('../fonts/shabnam.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Tanha-FD';
+    src: url('../fonts/Tanha-FD.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@layer base {
+    /* Light mode (default) */
+    :root {
+        --background: 250, 249, 248;    /* #FAF9F8 */
+        --foreground: 26, 24, 23;       /* #1A1817 */
+        --card: 255, 255, 255;          /* #FFFFFF */
+        --card-foreground: 26, 24, 23;  /* #1A1817 */
+        --border: 232, 227, 222;        /* #E8E3DE */
+        --muted: 154, 147, 144;         /* #9A9390 */
+        --accent: 168, 121, 78;         /* #A8794E */
+    }
+    font-family: 'Shabnam', system-ui, sans-serif;
+
+    /* Dark mode (auto-detected) */
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --background: 26, 24, 23;    /* #1A1817 */
+            --foreground: 245, 243, 240; /* #F5F3F0 */
+            --card: 36, 34, 33;          /* #242221 */
+            --card-foreground: 245, 243, 240; /* #F5F3F0 */
+            --border: 58, 54, 51;        /* #3A3633 */
+            --muted: 122, 116, 112;      /* #7A7470 */
+            --accent: 139, 94, 60;       /* #8B5E3C */
+        }
+    }
+
+    /* Apply styles */
+    * {
+        border-color: rgb(var(--border));
+    }
+
+    html {
+        font-family: 'YourFontName', system-ui, sans-serif;
+        scroll-behavior: smooth;
+    }
+
+    body {
+        background: rgb(var(--background));
+        color: rgb(var(--foreground));
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+}
+
+/* Utility classes for smooth transitions */
+@layer utilities {
+    .theme-transition {
+        transition: background-color 0.3s ease,
+        color 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+    }
+}

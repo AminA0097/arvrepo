@@ -8,17 +8,15 @@
     <title>چرم آروند | فروشگاه اینترنتی چرم طبیعی</title>
     <meta name="description" content="آروند عرضه‌کننده محصولات چرم ۱۰۰٪ طبیعی با کیفیت بالا">
     <meta name="theme-color" content="#8B5E3C">
-    <link rel="stylesheet" href="output.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
-        <link rel="stylesheet" th:href="@{/css/main.css}">
-
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/toast.css}">
+    <link rel="stylesheet" th:href="@{/output.css}">
     <th:block layout:fragment="page-styles"></th:block>
 </head>
 <body>
 
 <div class="ar-page-wrapper">
-
     <header th:replace="~{fragments/Shop-c/header :: header}"></header>
 
     <main class="ar-main ar-main-content">
@@ -30,7 +28,8 @@
 
 </div>
 
-<th:block layout:fragment="page-scripts"></th:block>
+<th:block layout:fragment="page-scripts">
 <script th:src="@{/js/swiper-bundle.min.js}"></script>
+</th:block>
 </body>
 </html>

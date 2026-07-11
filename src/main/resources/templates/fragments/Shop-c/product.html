@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/Shop-c/base}">
+
+<head>
+    <title>چرم آروند</title>
+    <style>
+        /* Product Page Styles */
+        .product-gallery-pagination .swiper-pagination-bullet {
+            background: #D6C2AE;
+            opacity: 1;
+        }
+
+        .product-gallery-pagination .swiper-pagination-bullet-active {
+            background: #A8794E;
+        }
+
+        .related-pagination .swiper-pagination-bullet {
+            background: #D6C2AE;
+            opacity: 1;
+        }
+
+        .related-pagination .swiper-pagination-bullet-active {
+            background: #A8794E;
+        }
+
+        .prose p {
+            margin-bottom: 0.75rem;
+        }
+
+        .prose p:last-child {
+            margin-bottom: 0;
+        }
+
+        .product-toast {
+            display: none;
+        }
+
+        .variant-btn.active {
+            border-color: #A8794E;
+            background-color: #F8F5F1;
+        }
+
+        .wishlist-btn.active i {
+            font-weight: 900;
+            color: #A8794E;
+        }
+
+        /* Smooth scroll behavior */
+        .ds-pdp-nav-links a {
+            scroll-margin-top: 100px;
+        }
+
+        /* Gallery - Right side */
+        .ds-pdp-gallery-wrap {
+            order: 3;
+        }
+
+        /* Info - Center */
+        .ds-pdp-info {
+            order: 2;
+        }
+
+        /* Buybox - Left */
+        .ds-pdp-buybox {
+            order: 1;
+        }
+
+        @media (max-width: 1023px) {
+            .ds-pdp-gallery-wrap {
+                order: 1;
+            }
+
+            .ds-pdp-info {
+                order: 2;
+            }
+
+            .ds-pdp-buybox {
+                order: 3;
+            }
+        }
+    </style>
+</head>
+
+<th:block layout:fragment="content">
+    <div id="toastContainer" class="toast-container"></div>
+    <main class="ds-main ds-pdp"
+          th:attr="data-product-id=${productId}">
+
+        <div class="ds-container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10">
+            <nav class="ds-pdp-breadcrumb flex flex-wrap items-center gap-1 text-sm text-leather-500 mb-4 sm:mb-6"
+                 aria-label="مسیر">
+                <a href="/" class="transition hover:text-leather-700">خانه</a>
+                <span class="text-leather-300">/</span>
+
+                <a href="/products" class="transition hover:text-leather-700">محصولات</a>
+                <span class="text-leather-300">/</span>
+
+                <span id="breadcrumb-category" class="font-medium text-leather-800">دسته</span>
+                <span class="text-leather-300">/</span>
+
+                <span id="breadcrumb-title" class="font-medium text-leather-900">عنوان محصول</span>
+            </nav>
+            <div class="ds-pdp-grid grid gap-6 lg:grid-cols-12 lg:gap-8">
+
+                <!-- ===== BUYBOX - LEFT ===== -->
+                <aside class="ds-pdp-buybox lg:col-span-3">
+                    <div class="sticky top-24 rounded-2xl bg-white p-6 shadow-card">
+
+                        <!-- Stock -->
+                        <div class="ds-pdp-meta-row mt-2 flex items-center gap-2 text-sm" id="stockContainer">
+                            <i class="fa-regular fa-circle-check text-green-600" id="stockIcon"></i>
+                            <span class="text-green-600" id="stockText">موجود در انبار</span>
+                            <span class="text-xs text-leather-400">(<span id="stockCount">۱۰</span> عدد)</span>
+                        </div>
+
+                        <!-- Price -->
+                        <div class="ds-pdp-price-block mt-4 border-t border-leather-100 pt-4">
+                            <div id="oldPriceContainer" class="hidden">
+                                <p class="ds-pdp-price-old text-sm text-leather-400 line-through">
+                                    <span id="oldPrice"></span> تومان
+                                </p>
+                            </div>
+
+                            <div class="ds-pdp-price-row flex items-center gap-3">
+                                <span class="ds-pdp-price text-2xl font-bold text-leather-900" id="finalPrice"></span>
+                                <span class="text-sm text-leather-500">تومان</span>
+                                <span
+                                        class="ds-pdp-discount-badge mr-auto hidden rounded-full bg-red-100 px-2.5 py-0.5 text-sm font-bold text-red-600"
+                                        id="discountBadge">
+        </span>
+                            </div>
+                        </div>
+
+
+                        <!-- Quantity -->
+                        <div class="ds-pdp-qty-row mt-4 flex items-center justify-between">
+                            <span class="text-sm font-medium text-leather-700">تعداد</span>
+                            <div class="ds-qty-control flex items-center gap-3 rounded-xl border border-leather-200 bg-leather-50 p-1">
+                                <button type="button"
+                                        class="flex h-8 w-8 items-center justify-center rounded-lg text-leather-600 transition hover:bg-leather-200"
+                                        id="decreaseQty">
+                                    <i class="fa-solid fa-minus text-xs"></i>
+                                </button>
+                                <span class="min-w-8 text-center font-bold text-leather-800" id="qtyDisplay">۱</span>
+                                <button type="button"
+                                        class="flex h-8 w-8 items-center justify-center rounded-lg text-leather-600 transition hover:bg-leather-200"
+                                        id="increaseQty">
+                                    <i class="fa-solid fa-plus text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Add to Cart -->
+                        <button type="button"
+                                class="ds-pdp-btn-cart mt-4 w-full rounded-2xl bg-red-600
+                                px-6 py-3.5 text-sm font-bold text-white transition hover:bg-leather-700 hover:shadow-soft disabled:cursor-not-allowed disabled:opacity-50"
+                                id="addToCartBtn">
+                            <i class="fa-solid fa-cart-plus ml-2"></i>
+                            افزودن به سبد خرید
+                        </button>
+                    </div>
+                </aside>
+
+                <!-- ===== PRODUCT INFO - CENTER ===== -->
+                <div class="ds-pdp-info lg:col-span-5">
+                    <!-- Title -->
+                    <h1 class="ds-pdp-title text-2xl font-extrabold text-leather-900 sm:text-3xl" id="title">عنوان
+                        محصول</h1>
+
+                    <!-- Subtitle / SKU -->
+                    <p class="ds-pdp-sku mt-1 text-sm text-leather-500" id="desc">desc</p>
+
+                    <!-- Rating -->
+                    <div class="ds-pdp-rating mt-3 flex items-center gap-3">
+                        <div class="flex items-center gap-1">
+                            <i class="fa-solid fa-star text-yellow-400"></i>
+                            <span class="font-bold text-leather-800" id="rating">4.8</span>
+                        </div>
+                    </div>
+
+                    <!-- Features -->
+                                        <ul class="ds-pdp-features mt-4 space-y-2">
+                                            <li th:each="feature : ${product.features}" class="flex items-start gap-2 text-sm text-leather-700">
+                                                <i class="fa-regular fa-circle-check mt-0.5 text-leather-500"></i>
+                                                <span th:text="${feature}">ویژگی محصول</span>
+                                            </li>
+                                        </ul>
+
+                    <!-- Variants -->
+                    <!--                    <div class="ds-pdp-variants mt-6" th:if="${product.variants}">-->
+                    <!--                        <p class="ds-pdp-variants-label mb-2 text-sm font-semibold text-leather-800">انتخاب گزینه:</p>-->
+                    <!--                        <div class="flex flex-wrap gap-2" id="variantContainer">-->
+                    <!--                            <button type="button"-->
+                    <!--                                    th:each="variant : ${product.variants}"-->
+                    <!--                                    class="variant-btn rounded-xl border-2 border-leather-200 px-4 py-2 text-sm font-medium text-leather-700 transition hover:border-leather-400 hover:bg-leather-50"-->
+                    <!--                                    data-variant-id="${variant.id}"-->
+                    <!--                                    th:text="${variant.label}">-->
+                    <!--                                گزینه-->
+                    <!--                            </button>-->
+                    <!--                        </div>-->
+                    <!--                    </div>-->
+
+                    <!-- Navigation Links -->
+                    <div class="ds-pdp-nav-links mt-6 flex flex-wrap gap-3 border-t border-leather-200 pt-4">
+                        <a href="#description"
+                           class="text-sm font-medium text-leather-600 transition hover:text-leather-900">معرفی</a>
+                        <span class="text-leather-300">|</span>
+                        <a href="#specs" class="text-sm font-medium text-leather-600 transition hover:text-leather-900">مشخصات</a>
+                        <span class="text-leather-300">|</span>
+                        <a href="#reviews"
+                           class="text-sm font-medium text-leather-600 transition hover:text-leather-900">نظرات</a>
+                        <span class="text-leather-300">|</span>
+                        <a href="#qa" class="text-sm font-medium text-leather-600 transition hover:text-leather-900">پرسش
+                            و
+                            پاسخ</a>
+                    </div>
+                </div>
+
+                <!-- ===== GALLERY - RIGHT ===== -->
+                <div class="ds-pdp-gallery-wrap lg:col-span-4">
+                    <div class="sticky top-24">
+                        <div class="ds-pdp-gallery overflow-hidden rounded-2xl bg-white shadow-card">
+                            <div class="aspect-square">
+                                <img id="mainProductImage"
+                                     src=""
+                                     alt="تصویر محصول"
+                                     class="h-full w-full object-contain p-4">
+                            </div>
+                        </div>
+
+                        <div id="thumbnailContainer" class="mt-3 flex gap-2 overflow-x-auto pb-2"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+</th:block>
+
+<th:block layout:fragment="page-scripts">
+    <script th:src="@{/js/products.js}"></script>
+    <script th:src="@{/js/base.js}"></script>
+    <script th:src="@{/js/swiper-bundle.min.js}"></script>
+</th:block>
+
+</html>

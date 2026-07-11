@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<th:block th:fragment="hero(heroSlides)">
+    <section class="ar-hero-section">
+        <div class="ar-hero-container">
+
+            <!-- اسلایدر Hero -->
+            <div class="swiper ar-hero-swiper" data-hero-slider>
+                <div class="swiper-wrapper">
+
+                    <!-- اسلایدها -->
+                    <div class="swiper-slide" th:each="slide : ${heroSlides}">
+                        <div class="ar-hero-slide">
+
+                            <!-- سمت چپ: محتوا -->
+                            <div class="ar-hero-slide-content">
+                                <div class="ar-hero-slide-badge" th:if="${slide.badge}">
+                                    <i class="fa-solid fa-fire"></i>
+                                    <span th:text="${slide.badge}">ویژه</span>
+                                </div>
+
+                                <h2 class="ar-hero-slide-title" th:utext="${slide.title}">
+                                    عنوان اصلی
+                                </h2>
+
+                                <p class="ar-hero-slide-description" th:text="${slide.description}">
+                                    توضیحات محصول
+                                </p>
+
+                                <a th:href="${slide.link}" class="ar-hero-slide-btn">
+                                    <span th:text="${slide.buttonText}">مشاهده بیشتر</span>
+                                    <i class="fa-solid fa-arrow-left"></i>
+                                </a>
+                            </div>
+
+                            <!-- سمت راست: تصویر -->
+                            <div class="ar-hero-slide-image">
+                                <img th:src="@{${slide.image}}"
+                                     th:alt="${slide.title}"
+                                     loading="lazy">
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- دکمه‌های ناوبری -->
+            <button class="ar-hero-nav ar-hero-nav--prev"
+                    onclick="document.querySelector('[data-hero-slider]').swiper.slidePrev()">
+            >
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+            <button class="ar-hero-nav ar-hero-nav--next"
+                    onclick="document.querySelector('[data-hero-slider]').swiper.slideNext()">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+
+        </div>
+    </section>
+</th:block>
+
+</body>
+</html>

@@ -63,3 +63,6 @@ if (document.readyState === 'loading') {
 } else {
     initApp();
 }
+function setValue(id,value){
+    document.getElementById(id).value = value;
+}
