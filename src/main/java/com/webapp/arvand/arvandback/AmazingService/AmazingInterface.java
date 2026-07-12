@@ -1,4 +1,4 @@
-package com.webapp.arvand.arvandback.AAmazingService;
+package com.webapp.arvand.arvandback.AmazingService;
 
 import com.webapp.arvand.arvandback.Utills.ApiException;
 

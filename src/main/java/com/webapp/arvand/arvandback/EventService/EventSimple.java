@@ -1,4 +1,4 @@
-package com.webapp.arvand.arvandback.AAEventService;
+package com.webapp.arvand.arvandback.EventService;
 
 
 import com.webapp.arvand.arvandback.Utills.DateUtil;

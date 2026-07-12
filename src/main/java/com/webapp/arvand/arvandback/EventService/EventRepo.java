@@ -1,4 +1,4 @@
-package com.webapp.arvand.arvandback.AAEventService;
+package com.webapp.arvand.arvandback.EventService;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 public interface EventRepo extends JpaRepository<EventEntity, String> {
 
     @Query("""
-        select new com.webapp.arvand.arvandback.AAEventService.EventSimple(
+        select new com.webapp.arvand.arvandback.EventService.EventSimple(
             e.id,
             e.docEntity.id,
             e.title,

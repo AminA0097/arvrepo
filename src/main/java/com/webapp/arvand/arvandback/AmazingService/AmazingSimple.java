@@ -1,4 +1,4 @@
-package com.webapp.arvand.arvandback.AAmazingService;
+package com.webapp.arvand.arvandback.AmazingService;
 
 import com.webapp.arvand.arvandback.AAProductService.ProductSimple;
 
@@ -8,8 +8,17 @@ import java.util.List;
 public class AmazingSimple {
     private String id;
     private Date duration;
+    private String name;
     private List<ProductSimple> productList;
 
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getId() {
         return id;

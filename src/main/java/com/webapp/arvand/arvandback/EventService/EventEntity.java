@@ -1,9 +1,8 @@
-package com.webapp.arvand.arvandback.AAEventService;
+package com.webapp.arvand.arvandback.EventService;
 
 import com.webapp.arvand.arvandback.Entity.DocEntity;
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Date;
 
