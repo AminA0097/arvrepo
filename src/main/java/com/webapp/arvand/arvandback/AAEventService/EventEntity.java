@@ -3,6 +3,8 @@ package com.webapp.arvand.arvandback.AAEventService;
 import com.webapp.arvand.arvandback.Entity.DocEntity;
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Date;
 
 @Entity
@@ -37,6 +39,28 @@ public class EventEntity {
 
     @Column(name = "FLD_END_DATE")
     private Date endDate;
+
+    @Column(name = "FLD_START_TIME")
+    private LocalTime startTime;
+
+    @Column(name = "FLD_END_TIME")
+    private LocalTime endTime;
+
+    public LocalTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalTime endTime) {
+        this.endTime = endTime;
+    }
 
     public String getAddress() {
         return address;

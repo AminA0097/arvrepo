@@ -17,7 +17,7 @@ public interface EventRepo extends JpaRepository<EventEntity, String> {
             e.inGrid,
             e.address,
             e.startDate,
-            e.endDate
+            e.endDate,e.desc,e.startTime,e.endTime
         )
         from EventEntity e
         where e.deleted = false 

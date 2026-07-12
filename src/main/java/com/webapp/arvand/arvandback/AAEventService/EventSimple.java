@@ -3,6 +3,7 @@ package com.webapp.arvand.arvandback.AAEventService;
 
 import com.webapp.arvand.arvandback.Utills.DateUtil;
 
+import java.time.LocalTime;
 import java.util.Date;
 
 public class EventSimple {
@@ -13,8 +14,12 @@ public class EventSimple {
     private String address;
     private String startDate;
     private String endDate;
+    private String desc;
+    private LocalTime startTime;
+    private LocalTime endTime;
 
-    public EventSimple(String id, String docId, String title, boolean inGrid, String address, Date startDate, Date endDate) {
+    public EventSimple(String id, String docId, String title, boolean inGrid, String address, Date startDate, Date endDate,String desc,
+                       LocalTime startTime, LocalTime endTime) {
         this.id = id;
         this.docId = docId;
         this.title = title;
@@ -22,6 +27,33 @@ public class EventSimple {
         this.address = address;
         this.startDate = DateUtil.format(startDate,"fa","yyyy/mm/dd");
         this.endDate = DateUtil.format(endDate,"fa","yyyy/mm/dd");
+        this.desc = desc;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
+
+    public LocalTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 
     public String getAddress() {
