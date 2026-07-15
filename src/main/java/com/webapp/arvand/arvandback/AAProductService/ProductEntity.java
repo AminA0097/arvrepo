@@ -25,15 +25,6 @@ public class ProductEntity implements Serializable {
     @Column(name = "FLD_TITLE")
     private String title;
 
-    @Column(name = "FLD_PRICE", nullable = false)
-    private Long price;
-
-    @Column(name = "FLD_DISCOUNT")
-    private int discount;
-
-    @Column(name = "FLD_STOCK")
-    private Integer stock = 0;
-
     @JoinColumn(name = "FLD_IMG_URL")
     @ManyToOne
     private DocEntity imgUrl;
@@ -56,6 +47,10 @@ public class ProductEntity implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FLD_CATEGORY_ID")
     private CategoryEntity category;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "FLD_SUB_CATEGORY_ID")
+    private CategoryEntity subCategory;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FLD_SKIN_ID")
@@ -90,6 +85,15 @@ public class ProductEntity implements Serializable {
             orphanRemoval = true
     )
     private Set<ProductVariantEntity> variants;
+
+
+    public CategoryEntity getSubCategory() {
+        return subCategory;
+    }
+
+    public void setSubCategory(CategoryEntity subCategory) {
+        this.subCategory = subCategory;
+    }
 
     public Set<ProductVariantEntity> getVariants() {
         return variants;
@@ -137,30 +141,6 @@ public class ProductEntity implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public Long getPrice() {
-        return price;
-    }
-
-    public void setPrice(Long price) {
-        this.price = price;
-    }
-
-    public int getDiscount() {
-        return discount;
-    }
-
-    public void setDiscount(int discount) {
-        this.discount = discount;
-    }
-
-    public Integer getStock() {
-        return stock;
-    }
-
-    public void setStock(Integer stock) {
-        this.stock = stock;
     }
 
     public DocEntity getImgUrl() {

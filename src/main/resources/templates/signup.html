@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ثبت نام | چرم آروند</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/vendor/fontawesome/css/all.min.css}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .signup-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 500px;
+            padding: 40px;
+        }
+
+        .signup-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .signup-header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .signup-header p {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row .form-group {
+            margin-bottom: 0;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            font-family: 'Vazirmatn', sans-serif;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group.error input,
+        .form-group.error textarea {
+            border-color: #e74c3c;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .form-group.error .error-message {
+            display: block;
+        }
+
+        .password-strength {
+            margin-top: 5px;
+            font-size: 12px;
+        }
+
+        .strength-bar {
+            height: 4px;
+            background: #ddd;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 3px;
+        }
+
+        .strength-fill {
+            height: 100%;
+            width: 0;
+            transition: width 0.3s;
+        }
+
+        .strength-fill.weak {
+            width: 33%;
+            background: #e74c3c;
+        }
+
+        .strength-fill.medium {
+            width: 66%;
+            background: #f39c12;
+        }
+
+        .strength-fill.strong {
+            width: 100%;
+            background: #27ae60;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .terms {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .terms a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .terms a:hover {
+            text-decoration: underline;
+        }
+
+        .login-link {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            max-width: 500px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            z-index: 9999;
+            animation: slideIn 0.3s ease;
+            display: none;
+        }
+
+        .toast.show {
+            display: block;
+        }
+
+        .toast.error {
+            background: #fee;
+            color: #e74c3c;
+            border-right: 4px solid #e74c3c;
+        }
+
+        .toast.success {
+            background: #efe;
+            color: #27ae60;
+            border-right: 4px solid #27ae60;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .signup-container {
+                padding: 30px 20px;
+            }
+
+            .signup-header h1 {
+                font-size: 24px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="toast" id="toast"></div>
+
+    <div class="signup-container">
+        <div class="signup-header">
+            <h1>ثبت نام</h1>
+            <p>حساب کاربری جدید ایجاد کنید</p>
+        </div>
+
+        <form id="signupForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="firstname">نام</label>
+                    <input type="text" id="firstname" name="firstname" required>
+                    <div class="error-message">نام الزامی است</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="lastname">نام خانوادگی</label>
+                    <input type="text" id="lastname" name="lastname" required>
+                    <div class="error-message">نام خانوادگی الزامی است</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">ایمیل</label>
+                <input type="email" id="email" name="email" required>
+                <div class="error-message">ایمیل معتبر الزامی است</div>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">شماره تماس</label>
+                <input type="tel" id="phone" name="phone" required>
+                <div class="error-message">شماره تماس الزامی است</div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">رمز عبور</label>
+                <input type="password" id="password" name="password" required>
+                <div class="password-strength">
+                    <div class="strength-bar">
+                        <div class="strength-fill"></div>
+                    </div>
+                    <span id="strengthText"></span>
+                </div>
+                <div class="error-message">رمز عبور باید حداقل 8 کاراکتر باشد</div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword">تایید رمز عبور</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+                <div class="error-message">رمزهای عبور یکسان نیستند</div>
+            </div>
+
+            <div class="terms">
+                با ثبت نام، شما <a href="#">شرایط و قوانین</a> و <a href="#">سیاست حریم خصوصی</a> را قبول می‌کنید
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="submitBtn">ثبت نام</button>
+        </form>
+
+        <div class="login-link">
+            آیا حساب کاربری دارید؟ <a href="/login">وارد شوید</a>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('signupForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const toastEl = document.getElementById('toast');
+        const passwordInput = document.getElementById('password');
+        const strengthFill = document.querySelector('.strength-fill');
+        const strengthText = document.getElementById('strengthText');
+
+        passwordInput.addEventListener('input', () => {
+            const strength = calculatePasswordStrength(passwordInput.value);
+            
+            strengthFill.className = 'strength-fill';
+            switch(strength) {
+                case 'weak':
+                    strengthFill.classList.add('weak');
+                    strengthText.textContent = 'ضعیف';
+                    break;
+                case 'medium':
+                    strengthFill.classList.add('medium');
+                    strengthText.textContent = 'متوسط';
+                    break;
+                case 'strong':
+                    strengthFill.classList.add('strong');
+                    strengthText.textContent = 'قوی';
+                    break;
+            }
+        });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Validation
+            const firstname = document.getElementById('firstname').value.trim();
+            const lastname = document.getElementById('lastname').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (!firstname || !lastname || !email || !phone || !password) {
+                showToast('لطفاً تمام فیلدها را پر کنید', 'error');
+                return;
+            }
+
+            if (password.length < 8) {
+                showToast('رمز عبور باید حداقل 8 کاراکتر باشد', 'error');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showToast('رمزهای عبور یکسان نیستند', 'error');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'درحال ثبت نام...';
+
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        firstname: firstname,
+                        lastname: lastname,
+                        email: email,
+                        phone: phone,
+                        password: password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showToast('ثبت نام موفقیت‌آمیز بود', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 1000);
+                } else {
+                    showToast(data.message || 'خطا در ثبت نام', 'error');
+                }
+            } catch (error) {
+                showToast('خطا در اتصال به سرور', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'ثبت نام';
+            }
+        });
+
+        function calculatePasswordStrength(password) {
+            let strength = 0;
+            
+            if (password.length >= 8) strength++;
+            if (password.match(/[a-z]/)) strength++;
+            if (password.match(/[A-Z]/)) strength++;
+            if (password.match(/[0-9]/)) strength++;
+            if (password.match(/[@$!%*?&]/)) strength++;
+
+            if (strength <= 2) return 'weak';
+            if (strength <= 4) return 'medium';
+            return 'strong';
+        }
+
+        function showToast(message, type) {
+            toastEl.textContent = message;
+            toastEl.className = `toast show ${type}`;
+            setTimeout(() => {
+                toastEl.classList.remove('show');
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
