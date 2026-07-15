@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/Shop-c/base}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جزئیات محصول | چرم آروند</title>
+    <link rel="stylesheet" th:href="@{/vendor/fontawesome/css/all.min.css}">
+    <style>
+        .product-detail-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .product-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .product-images {
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 10px;
+        }
+
+        .main-image {
+            width: 100%;
+            aspect-ratio: 1;
+            background: #f5f5f5;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: zoom-in;
+        }
+
+        .main-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-thumbnails {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+        }
+
+        .thumbnail {
+            width: 80px;
+            height: 80px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: border-color 0.3s;
+        }
+
+        .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .thumbnail.active {
+            border-color: #667eea;
+        }
+
+        .product-info h1 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .product-rating {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #999;
+        }
+
+        .rating-stars {
+            display: flex;
+            gap: 3px;
+            color: #f39c12;
+        }
+
+        .price-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .price {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .original-price {
+            font-size: 24px;
+            color: #999;
+            text-decoration: line-through;
+        }
+
+        .discount-badge {
+            background: #e74c3c;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .stock-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .stock-status.available {
+            color: #27ae60;
+        }
+
+        .stock-status.unavailable {
+            color: #e74c3c;
+        }
+
+        .stock-status i {
+            font-size: 16px;
+        }
+
+        .product-description {
+            margin-bottom: 25px;
+        }
+
+        .product-description h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .product-description p {
+            color: #666;
+            line-height: 1.8;
+            font-size: 14px;
+        }
+
+        .product-features {
+            margin-bottom: 25px;
+        }
+
+        .product-features h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .features-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .feature-item {
+            display: flex;
+            gap: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .feature-item i {
+            color: #667eea;
+            width: 20px;
+        }
+
+        .options-section {
+            margin-bottom: 25px;
+        }
+
+        .option-group {
+            margin-bottom: 20px;
+        }
+
+        .option-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .option-values {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .option-value {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 13px;
+        }
+
+        .option-value:hover {
+            border-color: #667eea;
+        }
+
+        .option-value.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .quantity-selector label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .quantity-input {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            height: 40px;
+        }
+
+        .quantity-input button {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .quantity-input button:hover {
+            background: #f5f5f5;
+        }
+
+        .quantity-input input {
+            width: 50px;
+            text-align: center;
+            border: none;
+            border-left: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+            font-size: 14px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            border: 2px solid #667eea;
+            color: #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #f9f9ff;
+        }
+
+        .reviews-section {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .reviews-title {
+            font-size: 22px;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .review-form {
+            background: #f9f9ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .review-form textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: 'Vazirmatn', sans-serif;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .review-item {
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .review-item:last-child {
+            border-bottom: none;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .review-author {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .review-date {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .review-rating {
+            display: flex;
+            gap: 3px;
+            color: #f39c12;
+            margin-bottom: 10px;
+        }
+
+        .review-text {
+            color: #666;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            max-width: 500px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            z-index: 9999;
+            animation: slideIn 0.3s ease;
+            display: none;
+        }
+
+        .toast.show {
+            display: block;
+        }
+
+        .toast.error {
+            background: #fee;
+            color: #e74c3c;
+            border-right: 4px solid #e74c3c;
+        }
+
+        .toast.success {
+            background: #efe;
+            color: #27ae60;
+            border-right: 4px solid #27ae60;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .product-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="ar-container">
+        <div class="product-detail-container" id="productContainer">
+            <div class="product-content" id="productContent"></div>
+            <div class="reviews-section">
+                <h2 class="reviews-title">نظرات خریداران</h2>
+                <div id="reviewsContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        let product = null;
+        const productId = new URLSearchParams(window.location.search).get('id') || window.location.pathname.split('/').pop();
+        let selectedVariant = '';
+
+        async function loadProduct() {
+            try {
+                const response = await fetch(`/api/products/${productId}`);
+                if (!response.ok) throw new Error('محصول یافت نشد');
+
+                const data = await response.json();
+                product = data.data;
+                renderProduct();
+                loadReviews();
+            } catch (error) {
+                showToast('خطا در بارگذاری محصول: ' + error.message, 'error');
+            }
+        }
+
+        function renderProduct() {
+            const container = document.getElementById('productContent');
+            const images = product.gallery || [{image: product.image}];
+
+            container.innerHTML = `
+                <div class="product-images">
+                    <div class="main-image">
+                        <img id="mainImage" src="${images[0]?.image || product.image}" alt="${product.name}">
+                    </div>
+                    <div class="image-thumbnails">
+                        ${images.map((img, idx) => `
+                            <div class="thumbnail ${idx === 0 ? 'active' : ''}" onclick="changeImage(this, '${img.image}')">
+                                <img src="${img.image}" alt="تصویر ${idx + 1}">
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="product-info">
+                    <h1>${product.name}</h1>
+
+                    <div class="product-rating">
+                        <div class="rating-stars">
+                            ${[1, 2, 3, 4, 5].map(i => `
+                                <i class="fas fa-star" style="color: ${i <= Math.round(product.rating || 4) ? '#f39c12' : '#ddd'}"></i>
+                            `).join('')}
+                        </div>
+                        <span>${product.rating || 4} از 5</span>
+                        <span>(${product.reviewCount || 0} نظر)</span>
+                    </div>
+
+                    <div class="price-section">
+                        <div class="price">${formatPrice(product.discountedPrice || product.price)} تومان</div>
+                        ${product.discountedPrice ? `
+                            <div class="original-price">${formatPrice(product.price)} تومان</div>
+                            <div class="discount-badge">تخفیف ${Math.round(((product.price - product.discountedPrice) / product.price) * 100)}%</div>
+                        ` : ''}
+                    </div>
+
+                    <div class="stock-status ${product.stock > 0 ? 'available' : 'unavailable'}">
+                        <i class="fas ${product.stock > 0 ? 'fa-check-circle' : 'fa-times-circle'}"></i>
+                        ${product.stock > 0 ? 'موجود در انبار' : 'ناموجود'}
+                    </div>
+
+                    <div class="product-description">
+                        <h3>توضیحات محصول</h3>
+                        <p>${product.description || 'توضیحات محصول'}</p>
+                    </div>
+
+                    ${product.features ? `
+                        <div class="product-features">
+                            <h3>ویژگی‌های محصول</h3>
+                            <div class="features-list">
+                                ${(product.features || []).map(f => `
+                                    <div class="feature-item">
+                                        <i class="fas fa-check"></i>
+                                        <span>${f}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <div class="options-section">
+                        <div class="option-group">
+                            <label class="option-label">رنگ</label>
+                            <div class="option-values">
+                                ${(product.colors || ['قهوه‌ای', 'سیاه']).map(color => `
+                                    <div class="option-value" onclick="selectOption(this, '${color}')">
+                                        ${color}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="quantity-selector">
+                        <label>تعداد:</label>
+                        <div class="quantity-input">
+                            <button onclick="decreaseQuantity()">−</button>
+                            <input type="number" id="quantity" value="1" min="1">
+                            <button onclick="increaseQuantity()">+</button>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="addToCart()">
+                            <i class="fas fa-shopping-cart"></i> افزودن به سبد
+                        </button>
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-heart"></i> علاقه‌مندی
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function changeImage(thumbnail, imageSrc) {
+            document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
+            thumbnail.classList.add('active');
+            document.getElementById('mainImage').src = imageSrc;
+        }
+
+        function selectOption(element, option) {
+            element.parentElement.querySelectorAll('.option-value').forEach(o => o.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedVariant = option;
+        }
+
+        function increaseQuantity() {
+            const qty = document.getElementById('quantity');
+            qty.value = parseInt(qty.value) + 1;
+        }
+
+        function decreaseQuantity() {
+            const qty = document.getElementById('quantity');
+            if (qty.value > 1) qty.value = parseInt(qty.value) - 1;
+        }
+
+        async function addToCart() {
+            const quantity = parseInt(document.getElementById('quantity').value);
+
+            try {
+                const response = await fetch(`/api/cart/add?productId=${productId}&quantity=${quantity}&variant=${selectedVariant}`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + getToken()
+                    }
+                });
+
+                if (response.ok) {
+                    showToast('محصول به سبد خریدی افزوده شد', 'success');
+                } else if (response.status === 401) {
+                    window.location.href = '/login';
+                } else {
+                    showToast('خطا در افزودن به سبد', 'error');
+                }
+            } catch (error) {
+                showToast('خطا در اتصال به سرور', 'error');
+            }
+        }
+
+        async function loadReviews() {
+            try {
+                const response = await fetch(`/api/reviews/product/${productId}?page=0&size=10`);
+                if (response.ok) {
+                    const data = await response.json();
+                    renderReviews(data.data.content || []);
+                }
+            } catch (error) {
+                console.error('خطا در بارگذاری نظرات:', error);
+            }
+        }
+
+        function renderReviews(reviews) {
+            const container = document.getElementById('reviewsContainer');
+            if (reviews.length === 0) {
+                container.innerHTML = '<p style="color: #999;">هنوز نظری برای این محصول ثبت نشده‌ است</p>';
+                return;
+            }
+
+            container.innerHTML = reviews.map(review => `
+                <div class="review-item">
+                    <div class="review-header">
+                        <span class="review-author">${review.userName}</span>
+                        <span class="review-date">${new Date(review.createdAt).toLocaleDateString('fa-IR')}</span>
+                    </div>
+                    <div class="review-rating">
+                        ${[1, 2, 3, 4, 5].map(i => `
+                            <i class="fas fa-star" style="color: ${i <= review.rating ? '#f39c12' : '#ddd'}"></i>
+                        `).join('')}
+                    </div>
+                    <div class="review-text">${review.comment}</div>
+                </div>
+            `).join('');
+        }
+
+        function formatPrice(price) {
+            return new Intl.NumberFormat('fa-IR').format(Math.round(price));
+        }
+
+        function getToken() {
+            return localStorage.getItem('token') || '';
+        }
+
+        function showToast(message, type) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast show ${type}`;
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+
+        loadProduct();
+    </script>
+</div>
+</body>
+</html>

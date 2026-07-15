@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/Shop-c/base}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سبد خرید | چرم آروند</title>
+    <style>
+        .cart-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .cart-title {
+            font-size: 28px;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-cart i {
+            font-size: 80px;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+
+        .empty-cart p {
+            color: #999;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .cart-content {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .cart-items {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            align-items: center;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-image {
+            width: 100px;
+            height: 100px;
+            flex-shrink: 0;
+            background: #f5f5f5;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .item-details {
+            flex: 1;
+        }
+
+        .item-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .item-variant {
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 10px;
+        }
+
+        .item-price {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .item-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            height: 36px;
+        }
+
+        .quantity-selector button {
+            border: none;
+            background: transparent;
+            width: 36px;
+            height: 36px;
+            cursor: pointer;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .quantity-selector button:hover {
+            background: #f5f5f5;
+        }
+
+        .quantity-selector input {
+            width: 50px;
+            text-align: center;
+            border: none;
+            border-left: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+            font-size: 14px;
+        }
+
+        .item-total {
+            width: 80px;
+            text-align: right;
+            font-weight: 600;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .remove-btn {
+            color: #e74c3c;
+            cursor: pointer;
+            font-size: 18px;
+            border: none;
+            background: transparent;
+            transition: color 0.3s;
+        }
+
+        .remove-btn:hover {
+            color: #c0392b;
+        }
+
+        .cart-summary {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .summary-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .summary-row.total {
+            border-top: 2px solid #eee;
+            padding-top: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .summary-value {
+            font-weight: 600;
+        }
+
+        .coupon-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .coupon-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 13px;
+        }
+
+        .coupon-input button {
+            padding: 10px 15px;
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .coupon-input button:hover {
+            background: #eee;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .checkout-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .continue-shopping {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .continue-shopping:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .cart-content {
+                grid-template-columns: 1fr;
+            }
+
+            .cart-summary {
+                position: static;
+            }
+
+            .cart-item {
+                flex-wrap: wrap;
+            }
+
+            .item-image {
+                width: 80px;
+                height: 80px;
+            }
+
+            .item-actions {
+                width: 100%;
+                order: 3;
+                margin-top: 15px;
+            }
+
+            .item-details {
+                order: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="ar-container">
+        <div class="cart-container">
+            <h1 class="cart-title">سبد خرید</h1>
+
+            <div id="emptyCart" class="empty-cart" style="display: none;">
+                <i class="fas fa-shopping-cart"></i>
+                <p>سبد خرید شما خالی است</p>
+                <a href="/" class="continue-shopping">بازگشت به خانه</a>
+            </div>
+
+            <div id="cartContent" style="display: none;">
+                <div class="cart-content">
+                    <div class="cart-items" id="cartItems"></div>
+
+                    <div class="cart-summary">
+                        <div class="summary-title">خلاصه سفارش</div>
+
+                        <div class="coupon-input">
+                            <input type="text" id="couponCode" placeholder="کد تخفیف">
+                            <button onclick="applyCoupon()">اعمال</button>
+                        </div>
+
+                        <div class="summary-row">
+                            <span>جمع کل:</span>
+                            <span class="summary-value" id="subtotal">0 تومان</span>
+                        </div>
+
+                        <div class="summary-row">
+                            <span>تخفیف:</span>
+                            <span class="summary-value" id="discount">0 تومان</span>
+                        </div>
+
+                        <div class="summary-row">
+                            <span>هزینه ارسال:</span>
+                            <span class="summary-value" id="shipping">0 تومان</span>
+                        </div>
+
+                        <div class="summary-row total">
+                            <span>مجموع:</span>
+                            <span id="total">0 تومان</span>
+                        </div>
+
+                        <button class="checkout-btn" onclick="goToCheckout()">پرداخت</button>
+                        <a href="/" class="continue-shopping">ادامه خریدی</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let cart = null;
+
+        async function loadCart() {
+            try {
+                const response = await fetch('/api/cart', {
+                    headers: {
+                        'Authorization': 'Bearer ' + getToken()
+                    }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        window.location.href = '/login';
+                    }
+                    return;
+                }
+
+                const data = await response.json();
+                cart = data.data;
+
+                if (cart.items.length === 0) {
+                    document.getElementById('emptyCart').style.display = 'block';
+                    document.getElementById('cartContent').style.display = 'none';
+                } else {
+                    renderCart();
+                    document.getElementById('cartContent').style.display = 'block';
+                    document.getElementById('emptyCart').style.display = 'none';
+                }
+            } catch (error) {
+                console.error('خطا در بارگذاری سبد:', error);
+            }
+        }
+
+        function renderCart() {
+            const cartItems = document.getElementById('cartItems');
+            cartItems.innerHTML = '';
+
+            cart.items.forEach(item => {
+                const itemEl = document.createElement('div');
+                itemEl.className = 'cart-item';
+                itemEl.innerHTML = `
+                    <div class="item-image">
+                        <img src="${item.productImage}" alt="${item.productName}">
+                    </div>
+                    <div class="item-details">
+                        <div class="item-name">${item.productName}</div>
+                        ${item.variant ? `<div class="item-variant">رنگ: ${item.variant}</div>` : ''}
+                        <div class="item-price">${formatPrice(item.unitPrice)} تومان</div>
+                    </div>
+                    <div class="item-actions">
+                        <div class="quantity-selector">
+                            <button onclick="changeQuantity(${item.id}, -1)">−</button>
+                            <input type="number" value="${item.quantity}" min="1" onchange="changeQuantity(${item.id}, this.value)">
+                            <button onclick="changeQuantity(${item.id}, 1)">+</button>
+                        </div>
+                        <div class="item-total">${formatPrice(item.totalPrice)}</div>
+                        <button class="remove-btn" onclick="removeFromCart(${item.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                cartItems.appendChild(itemEl);
+            });
+
+            updateSummary();
+        }
+
+        function updateSummary() {
+            const subtotal = cart.totalPrice;
+            const discount = 0;
+            const shipping = 0;
+            const total = subtotal - discount + shipping;
+
+            document.getElementById('subtotal').textContent = formatPrice(subtotal) + ' تومان';
+            document.getElementById('discount').textContent = formatPrice(discount) + ' تومان';
+            document.getElementById('shipping').textContent = formatPrice(shipping) + ' تومان';
+            document.getElementById('total').textContent = formatPrice(total) + ' تومان';
+        }
+
+        async function changeQuantity(cartItemId, change) {
+            if (typeof change === 'string') {
+                const newQuantity = parseInt(change);
+                if (newQuantity < 1) return;
+                change = newQuantity;
+            }
+
+            try {
+                const item = cart.items.find(i => i.id === cartItemId);
+                const newQuantity = typeof change === 'number' && change > 1 ? change : (item.quantity + change);
+
+                const response = await fetch(`/api/cart/update/${cartItemId}?quantity=${newQuantity}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': 'Bearer ' + getToken()
+                    }
+                });
+
+                if (response.ok) {
+                    await loadCart();
+                }
+            } catch (error) {
+                console.error('خطا:', error);
+            }
+        }
+
+        async function removeFromCart(cartItemId) {
+            if (!confirm('آیا می‌خواهید این محصول را حذف کنید؟')) return;
+
+            try {
+                const response = await fetch(`/api/cart/remove/${cartItemId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': 'Bearer ' + getToken()
+                    }
+                });
+
+                if (response.ok) {
+                    await loadCart();
+                }
+            } catch (error) {
+                console.error('خطا:', error);
+            }
+        }
+
+        function applyCoupon() {
+            const code = document.getElementById('couponCode').value.trim();
+            if (!code) {
+                alert('لطفاً کد تخفیف را وارد کنید');
+                return;
+            }
+            // TODO: اعمال کد تخفیف
+            alert('این قابلیت بالاتر فعال خواهد شد');
+        }
+
+        function goToCheckout() {
+            window.location.href = '/checkout';
+        }
+
+        function formatPrice(price) {
+            return new Intl.NumberFormat('fa-IR').format(price);
+        }
+
+        function getToken() {
+            // بدست آوردن token از cookie یا localStorage
+            return localStorage.getItem('token') || '';
+        }
+
+        // بارگذاری سبد هنگام بارگذاری صفحه
+        loadCart();
+    </script>
+</div>
+</body>
+</html>
