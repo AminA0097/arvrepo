@@ -30,6 +30,17 @@ public class CategoryEntity {
     @Column(name = "FLD_DELETED")
     private boolean deleted = false;
 
+    @Column(name = "FLD_LEVEL_TYPE")
+    private String levelType;
+
+    public String getLevelType() {
+        return levelType;
+    }
+
+    public void setLevelType(String levelType) {
+        this.levelType = levelType;
+    }
+
     public String getId() {
         return id;
     }

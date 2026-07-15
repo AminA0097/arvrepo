@@ -3,33 +3,31 @@ package com.webapp.arvand.arvandback.AAProductService;
 public class ProductSimple {
 
     private String id;
-
     private String name;
-
     private String title;
-
-    private Long price;
-
-    private int discount;
-
-    private int stock = 0;
-
     private String imgUrl;
+    private Long views;
+    private Long rank;
+    private Long price;
+    private Long stock;
+    private Long discount;
+    private boolean available;
 
-    private Long views = 0L;
 
-    private Long rank = 0L;
-
-    public ProductSimple(String id, String name, String title, Long price, int discount, Integer stock, String imgUrl, Long views, Long rank) {
+    public ProductSimple(String id, String name, String title, String imgUrl,
+                         Long views, Long rank,
+                         Long discount,Long price,Long stock,boolean available
+    ) {
         this.id = id;
         this.name = name;
         this.title = title;
-        this.price = price;
-        this.discount = discount;
-        this.stock = stock;
         this.imgUrl = imgUrl;
         this.views = views;
         this.rank = rank;
+        this.price = price;
+        this.stock = stock;
+        this.discount = discount;
+        this.available = available;
     }
 
     public String getId() {
@@ -56,30 +54,6 @@ public class ProductSimple {
         this.title = title;
     }
 
-    public Long getPrice() {
-        return price;
-    }
-
-    public void setPrice(Long price) {
-        this.price = price;
-    }
-
-    public int getDiscount() {
-        return discount;
-    }
-
-    public void setDiscount(int discount) {
-        this.discount = discount;
-    }
-
-    public int getStock() {
-        return stock;
-    }
-
-    public void setStock(int stock) {
-        this.stock = stock;
-    }
-
     public String getImgUrl() {
         return imgUrl;
     }
@@ -102,5 +76,37 @@ public class ProductSimple {
 
     public void setRank(Long rank) {
         this.rank = rank;
+    }
+
+    public Long getPrice() {
+        return price;
+    }
+
+    public void setPrice(Long price) {
+        this.price = price;
+    }
+
+    public Long getStock() {
+        return stock;
+    }
+
+    public void setStock(Long stock) {
+        this.stock = stock;
+    }
+
+    public Long getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(Long discount) {
+        this.discount = discount;
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
     }
 }

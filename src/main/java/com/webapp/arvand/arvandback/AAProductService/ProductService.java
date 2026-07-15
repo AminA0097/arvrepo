@@ -17,13 +17,24 @@ import java.util.*;
 @Service
 public class ProductService implements ProductInterface {
     private static final Set<String> WHITE_SEARCH = Set.of(
-            "e.title", "e.category.id"
+            "e.title", "e.category.id","e.views"
     );
     private static final Set<String> WHITE_SORT = Set.of(
             "e.id",
             "e.views",
             "e.rank"
     );
+    private static final Map<String, String> FIELD_MAP = Map.of(
+            "e.id", "e.fld_id",
+            "e.name", "e.fld_name",
+            "e.title", "e.fld_title",
+            "e.views", "e.fld_views",
+            "e.rank", "e.fld_rank",
+            "v.price", "v.fld_price",
+            "v.discount", "v.fld_discount",
+            "v.stockQuantity", "v.fld_stock_quantity"
+    );
+
     @Autowired
     private ProductRepo productRepo;
     @Autowired
@@ -32,23 +43,30 @@ public class ProductService implements ProductInterface {
     @Override
     public PageResponse<ProductSimple> search(ProductSearchReq req) throws ApiException {
         try {
-//            if (req.getPageNo() < 0) {
-//                throw new ApiException(ApiErrorType.SERVER_ERROR, "شماره صفحه نامعتبر است");
-//            }
-//
-//            if (req.getPageSize() <= 0) {
-//                throw new ApiException(ApiErrorType.SERVER_ERROR, "اندازه صفحه نامعتبر است");
-//            }
+            String getProductsByViews = "select e.fld_id," +
+                    "       e.fld_name," +
+                    "       e.fld_title," +
+                    "       e.fld_img_url," +
+                    "       e.fld_views," +
+                    "       e.fld_rank," +
+                    "       v.fld_discount                         as discount," +
+                    "       COALESCE(" +
+                    "               MIN(CASE WHEN v.FLD_STOCK_QUANTITY > 0 THEN v.FLD_PRICE END)," +
+                    "               MIN(v.FLD_PRICE)" +
+                    "       )                                      AS base_price," +
+                    "       SUM(COALESCE(v.FLD_STOCK_QUANTITY, 0)) AS total_stock," +
+                    "       CASE" +
+                    "           WHEN SUM(COALESCE(v.FLD_STOCK_QUANTITY, 0)) > 0 THEN 1" +
+                    "           ELSE 0" +
+                    "           END                                AS is_available" +
+                    "from tbl_product e" +
+                    "         LEFT JOIN TBL_PRODUCT_VARIANT v" +
+                    "                   ON v.FLD_PRODUCT_ID = e.fld_id" +
+                    "where e.fld_deleted = false and e.fld_views > 30" +
+                    "group by e.fld_id, e.fld_name, e.fld_title, e.fld_img_url, e.fld_views, e.fld_rank, v.fld_discount";
 
             FilterResult result = CreateQuery.createQuery(
-                    new StringBuilder("""
-                                select new com.webapp.arvand.arvandback.AAProductService.ProductSimple(
-                                    e.id, e.name, e.title, e.price, e.discount, e.stock,
-                                    e.imgUrl.id, e.views, e.rank
-                                )
-                                from ProductEntity e
-                                where e.deleted = false
-                            """),
+                    new StringBuilder(getProductsByViews),
                     req.getFilter(),
                     WHITE_SEARCH,
                     req.getSortBy(),
@@ -56,7 +74,7 @@ public class ProductService implements ProductInterface {
                     WHITE_SORT
             );
 
-            Query query = entityManager.createQuery(result.getQuery());
+            Query query = entityManager.createNativeQuery(result.getQuery());
 
             for (Map.Entry<String, Object> entry : result.getParameters().entrySet()) {
                 query.setParameter(entry.getKey(), entry.getValue());
@@ -80,7 +98,7 @@ public class ProductService implements ProductInterface {
                     null
             );
 
-            Query countQuery = entityManager.createQuery(countFilterResult.getQuery());
+            Query countQuery = entityManager.createNativeQuery(countFilterResult.getQuery());
 
             for (Map.Entry<String, Object> entry : countFilterResult.getParameters().entrySet()) {
                 countQuery.setParameter(entry.getKey(), entry.getValue());
@@ -135,59 +153,110 @@ public class ProductService implements ProductInterface {
 
     @Override
     public PageResponse<ProductSimple> getProductsByViews(int page, int size, int views) {
+        List<ProductSimple> products = new ArrayList();
+        int count = 0;
+        String getProductsByViews = "select e.id,\n" +
+                "                    e.name,\n" +
+                "                    e.title,\n" +
+                "                    e.imgUrl.id,\n" +
+                "                    e.views,\n" +
+                "                    e.rank,\n" +
+                "                    v.fld_discount                         as discont,\n" +
+                "                           COALESCE(\n" +
+                "                                   MIN(CASE WHEN v.FLD_STOCK_QUANTITY > 0 THEN v.FLD_PRICE END),\n" +
+                "                                   MIN(v.FLD_PRICE)\n" +
+                "                           )                                      AS base_price,\n" +
+                "                           SUM(COALESCE(v.FLD_STOCK_QUANTITY, 0)) AS total_stock,\n" +
+                "                           CASE\n" +
+                "                               WHEN SUM(COALESCE(v.FLD_STOCK_QUANTITY, 0)) > 0 THEN 1\n" +
+                "                               ELSE 0\n" +
+                "                               END                                AS is_available\n" +
+                "                from ProductEntity e\n" +
+                "                LEFT JOIN TBL_PRODUCT_VARIANT v\n" +
+                "                                   ON v.FLD_PRODUCT_ID = p.FLD_ID\n" +
+                "                where  e.deleted = false and e.views > :views";
+        String getProductsByViewsCount = "select count(*) " +
+                "                from ProductEntity e\n" +
+                "                LEFT JOIN TBL_PRODUCT_VARIANT v\n" +
+                "                                   ON v.FLD_PRODUCT_ID = p.FLD_ID\n" +
+                "                where  e.deleted = false and e.views > :views";
         try {
-            Pageable pageable = PageRequest.of(page, size);
-            Page<ProductSimple> entities = productRepo.findByMostViews(views, pageable);
-            PageResponse<ProductSimple> response = new PageResponse<>(
-                    entities.getContent(),
-                    entities.getNumber(),
-                    entities.getTotalPages(),
-                    entities.getTotalElements(),
-                    entities.getSize()
-            );
-            return response;
+            Query query = entityManager.createNativeQuery(getProductsByViews)
+                    .setFirstResult(page)
+                    .setMaxResults(size);
+            List<Object[]> row = query.getResultList();
+            for (Object[] r : row) {
+                String id = r[0].toString();
+                String name = r[0].toString();
+                String title = r[0].toString();
+                String imgUrl = r[0].toString();
+                Long view = Long.parseLong(r[0].toString());
+                Long rank = Long.parseLong(r[0].toString());
+                Long price = Long.parseLong(r[0].toString());
+                Long stock = Long.parseLong(r[0].toString());
+                Long discount = Long.parseLong(r[0].toString());
+                boolean available = r[0].toString().equals("1") ? true : false;
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            throw new ApiException(ApiErrorType.SERVER_ERROR, "Server Not Available");
         }
+        try {
+            Query query = entityManager.createNativeQuery(getProductsByViewsCount);
+            count = Integer.parseInt(query.getResultList().get(0).toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ApiException(ApiErrorType.SERVER_ERROR, "Server Not Available");
+        }
+
+        int totalPages = (int) Math.ceil((double) count / size);
+
+        return new PageResponse<>(
+                products,
+                page,
+                totalPages,
+                count,
+                size
+        );
     }
 
     @Override
     public PageResponse<ProductSimple> getProductsByDis(int page, int size, int dis) {
-        try {
-            Pageable pageable = PageRequest.of(page, size);
-            Page<ProductSimple> entities = productRepo.findByDis(dis, pageable);
-            PageResponse<ProductSimple> response = new PageResponse<>(
-                    entities.getContent(),
-                    entities.getNumber(),
-                    entities.getTotalPages(),
-                    entities.getTotalElements(),
-                    entities.getSize()
-            );
-
-            return response;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+//        try {
+//            Pageable pageable = PageRequest.of(page, size);
+//            Page<ProductSimple> entities = productRepo.findByDis(dis, pageable);
+//            PageResponse<ProductSimple> response = new PageResponse<>(
+//                    entities.getContent(),
+//                    entities.getNumber(),
+//                    entities.getTotalPages(),
+//                    entities.getTotalElements(),
+//                    entities.getSize()
+//            );
+//
+//            return response;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+        return null;
     }
 
     @Override
     public ProductDetailSimple getById(String id) throws ApiException {
-        String getProd = "" +
-                "select new com.webapp.arvand.arvandback.AAProductService.ProductDetailSimple(" +
-                "e.id,e.title,c.id,c.faName,e.price," +
-                "e.discount,e.views,e.rank,e.imgUrl.id,e.stock,e.desc) " +
-                "from ProductEntity e " +
-                " join CategoryEntity c on c.id = e.category.id " +
-                " where e.deleted = false and e.id = :id";
-        try {
-            List<ProductDetailSimple> res = entityManager.createQuery(getProd).setParameter("id", id).getResultList();
-            return res.get(0);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new ApiException(ApiErrorType.SERVER_ERROR, "Product Not Found!");
-        }
+//        String getProd = "" +
+//                "select new com.webapp.arvand.arvandback.AAProductService.ProductDetailSimple(" +
+//                "e.id,e.title,c.id,c.faName,e.views,e.rank,e.imgUrl.id,e.desc) " +
+//                "from ProductEntity e " +
+//                " join CategoryEntity c on c.id = e.category.id " +
+//                " where e.deleted = false and e.id = :id";
+//        try {
+//            List<ProductDetailSimple> res = entityManager.createQuery(getProd).setParameter("id", id).getResultList();
+//            return res.get(0);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            throw new ApiException(ApiErrorType.SERVER_ERROR, "Product Not Found!");
+//        }
+        return null;
     }
 
     @Override
@@ -197,7 +266,7 @@ public class ProductService implements ProductInterface {
                 "where e.FLD_PRODUCT_ID = ? ";
         try {
             res = entityManager.createNativeQuery(query).setParameter(1, id).getResultList();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw new ApiException(ApiErrorType.SERVER_ERROR, "Gallery Not Found!");
         }
@@ -205,12 +274,12 @@ public class ProductService implements ProductInterface {
     }
 
     @Override
-    public List<Map<String, String>>getFutures(String id) throws ApiException {
+    public List<Map<String, String>> getFutures(String id) throws ApiException {
         List res = new ArrayList<>();
         String getSkin = "select t.fld_id,t.fld_fa_name,t.fld_value from tbl_product e\n" +
                 "join tbl_core_thing t on t.fld_id = e.fld_skin_id where e.fld_id = ?";
         try {
-            List<Object[]> skinRes = entityManager.createNativeQuery(getSkin).setParameter(1,id).getResultList();
+            List<Object[]> skinRes = entityManager.createNativeQuery(getSkin).setParameter(1, id).getResultList();
             Map skinMap = new HashMap<>();
             if (skinRes.size() > 0) {
                 for (Object[] row : skinRes) {
@@ -220,8 +289,7 @@ public class ProductService implements ProductInterface {
                     res.add(skinMap);
                 }
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw new ApiException(ApiErrorType.SERVER_ERROR, "Skin Not Found!");
         }
